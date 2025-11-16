@@ -1,0 +1,33 @@
+@import "tailwindcss";
+
+:root{
+  --g1: #020202;
+  --g2: #29c42e;
+  --g3: #0a0f0b;
+  --g4: #0b1016;
+}
+
+html,body,#__next{
+  height:100%;
+}
+
+body { margin: 0; padding: 0; }
+
+@keyframes gradientShift {
+  0% { background-position: 0% 50%;}
+  50%{ background-position: 100% 50%;}
+  100%{ background-position: 0% 50%;}
+}
+
+/* login card */
+.login-card {
+  backdrop-filter: blur(6px);
+  background: rgba(255,255,255,0.75);
+  border-radius: 12px;
+  box-shadow: 0 6px 30px rgba(20, 40, 80, 0.06);
+}
+
+/* simple inputs */
+input {
+  width: 100%;
+}
