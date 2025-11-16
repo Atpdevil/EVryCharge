@@ -1,24 +1,22 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef } from "react";
 import { useRouter } from "next/router";
 
 export default function LoginMain() {
   const router = useRouter();
   const vantaRef = useRef(null);
-  const [vantaEffect, setVantaEffect] = useState(null);
+  const vantaEffect = useRef(null);
 
   useEffect(() => {
-    let p5Instance = null;
+    let mounted = true;
 
     (async () => {
-      const p5 = (await import("p5")).default;
-      p5Instance = p5;
+      const THREE = await import("three");
+      const VANTA = (await import("vanta/dist/vanta.net.min")).default;
 
-      const TOPOLOGY = (await import("vanta/dist/vanta.topology.min")).default;
-
-      if (!vantaEffect) {
-        const effect = TOPOLOGY({
+      if (mounted && !vantaEffect.current) {
+        vantaEffect.current = VANTA({
           el: vantaRef.current,
-          p5: p5Instance,
+          THREE,
           mouseControls: true,
           touchControls: true,
           gyroControls: false,
@@ -26,18 +24,24 @@ export default function LoginMain() {
           minWidth: 200.0,
           scale: 1.0,
           scaleMobile: 1.0,
-          color: 0x31c718,
-          backgroundColor: 0x000000,
+          color: 0x25d90b,
+          backgroundColor: 0x405119,
+          maxDistance: 26.0,
+          spacing: 17.0,
         });
-
-        setVantaEffect(effect);
       }
     })();
 
     return () => {
-      if (vantaEffect) vantaEffect.destroy();
+      mounted = false;
+      if (vantaEffect.current) {
+        try {
+          vantaEffect.current.destroy();
+        } catch (_) {}
+        vantaEffect.current = null;
+      }
     };
-  }, [vantaEffect]);
+  }, []);
 
   return (
     <div
@@ -45,8 +49,8 @@ export default function LoginMain() {
       className="min-h-screen flex flex-col items-center justify-center relative"
     >
       <div className="z-10 flex flex-col items-center justify-center gap-6 p-6">
-        <h1 className="text-4xl font-bold text-white">EVryCharge</h1>
-        <p className="text-gray-200">Charge Anywhere. Anytime.</p>
+        <h1 className="text-4xl font-bold text-black">EVryCharge</h1>
+        <p className="text-black-200">Charge Anywhere. Anytime.</p>
 
         <div className="w-full max-w-md flex flex-col gap-4 mt-6">
           <button
@@ -64,7 +68,7 @@ export default function LoginMain() {
           </button>
         </div>
 
-        <div className="text-xs text-gray-300 mt-8">
+        <div className="text-xs text-black-300 mt-8">
           By continuing you agree to our Terms and Privacy Policy.
         </div>
       </div>
