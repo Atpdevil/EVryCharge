@@ -1,4 +1,3 @@
-// pages/login/user.jsx
 import React, { useState } from "react";
 import GoogleAuthButton from "../../components/GoogleAuthButton";
 
