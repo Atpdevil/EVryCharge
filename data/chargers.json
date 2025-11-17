@@ -1,0 +1,16 @@
+[
+  {
+    "name": "Ather Grid - Chennai",
+    "lat": 13.0827,
+    "lng": 80.2707,
+    "price": 12,
+    "status": "Available"
+  },
+  {
+    "name": "Ola Hypercharger - Bangalore",
+    "lat": 12.9716,
+    "lng": 77.5946,
+    "price": 10,
+    "status": "Busy"
+  }
+]

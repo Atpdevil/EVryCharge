@@ -25,7 +25,7 @@ export default function LoginMain() {
           scale: 1.0,
           scaleMobile: 1.0,
           color: 0x25d90b,
-          backgroundColor: 0x405119,
+          backgroundColor: 0x2d9f2c,
           maxDistance: 26.0,
           spacing: 17.0,
         });
