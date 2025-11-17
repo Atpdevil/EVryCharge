@@ -57,14 +57,14 @@ export default function LoginMain() {
             className="p-4 bg-white border rounded-lg shadow hover:bg-gray-100"
             onClick={() => router.push("/login/user")}
           >
-            Login as User
+            Sign up as User
           </button>
 
           <button
             className="p-4 bg-white border rounded-lg shadow hover:bg-gray-100"
             onClick={() => router.push("/login/host")}
           >
-            Login as Host
+            Sign up as Host
           </button>
         </div>
 

@@ -25,7 +25,7 @@ export default function HostSignup() {
   return (
     <div className="min-h-screen flex items-center justify-center p-6">
       <div className="w-full max-w-md">
-        <h1 className="text-2xl font-bold mb-4">Signup as User</h1>
+        <h1 className="text-2xl font-bold mb-4">Sign up as User</h1>
 
         <div className="bg-white p-6 rounded-xl shadow flex flex-col gap-4 login-card">
           <input
