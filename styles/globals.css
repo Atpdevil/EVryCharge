@@ -1,12 +1,5 @@
 @import "tailwindcss";
 
-:root{
-  --g1: #020202;
-  --g2: #29c42e;
-  --g3: #0a0f0b;
-  --g4: #0b1016;
-}
-
 html,body,#__next{
   height:100%;
 }

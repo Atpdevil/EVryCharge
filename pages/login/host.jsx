@@ -7,7 +7,9 @@ export default function HostSignup() {
   const handleSignup = () => {
     const user = { role: "host", ...form };
     localStorage.setItem("ev_user", JSON.stringify(user));
-    window.location.href = "/host/dashboard";
+
+    // Correct redirect
+    window.location.href = "/host/select-vehicle";
   };
 
   const handleGoogle = (data) => {
@@ -18,7 +20,9 @@ export default function HostSignup() {
       picture: data.picture,
     };
     localStorage.setItem("ev_user", JSON.stringify(user));
-    window.location.href = "/host/dashboard";
+
+    // Google also needs vehicle selection
+    window.location.href = "/host/select-vehicle";
   };
 
   return (
@@ -46,7 +50,12 @@ export default function HostSignup() {
             className="p-3 border rounded"
           />
 
-          <button onClick={handleSignup} className="bg-blue-600 text-white p-3 rounded">Signup</button>
+          <button
+            onClick={handleSignup}
+            className="bg-blue-600 text-white p-3 rounded"
+          >
+            Signup
+          </button>
 
           <div className="text-center text-gray-500">OR</div>
 

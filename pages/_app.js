@@ -11,4 +11,7 @@ export default function MyApp({ Component, pageProps }) {
       <Component {...pageProps} />
     </GoogleOAuthProvider>
   );
+  useEffect(() => {
+    useStore.getState().loadStationsFromLocal();
+  }, []);
 }

@@ -1,13 +1,15 @@
 import React, { useState } from "react";
 import GoogleAuthButton from "../../components/GoogleAuthButton";
 
-export default function HostSignup() {
+export default function UserSignup() {
   const [form, setForm] = useState({ name: "", phone: "", email: "" });
 
   const handleSignup = () => {
     const user = { role: "user", ...form };
     localStorage.setItem("ev_user", JSON.stringify(user));
-    window.location.href = "/user/home";
+
+    // Redirect to vehicle selection
+    window.location.href = "/user/select-vehicle";
   };
 
   const handleGoogle = (data) => {
@@ -18,7 +20,9 @@ export default function HostSignup() {
       picture: data.picture,
     };
     localStorage.setItem("ev_user", JSON.stringify(user));
-    window.location.href = "/user/home";
+
+    // Same redirect
+    window.location.href = "/user/select-vehicle";
   };
 
   return (
@@ -46,7 +50,12 @@ export default function HostSignup() {
             className="p-3 border rounded"
           />
 
-          <button onClick={handleSignup} className="bg-blue-600 text-white p-3 rounded">Signup</button>
+          <button
+            onClick={handleSignup}
+            className="bg-blue-600 text-white p-3 rounded"
+          >
+            Signup
+          </button>
 
           <div className="text-center text-gray-500">OR</div>
 
