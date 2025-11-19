@@ -1,144 +1,239 @@
-import dynamic from "next/dynamic";
+"use client";
+
 import { useState } from "react";
+import dynamic from "next/dynamic";
 import { useStore } from "../../components/store";
-import { evScooters } from "../../data/evScooters";
-import { evCars } from "../../data/evCars";
+import { v4 as uuidv4 } from "uuid";
 
-const AddStationMap = dynamic(() => import("../../components/Host/AddStationMap"), { ssr: false });
-
-const station = {
-  id: uuidv4(),
-  name: form.name,
-  lat: Number(pin.lat),
-  lng: Number(pin.lng),
-  price: Number(form.price),
-  plug: form.plug || "Type 2",
-  status: form.status || "Available",
-
-  supportedVehicleTypes,
-  supportedModels,
-
-  city: form.city || "",
-  pincode: form.pincode || "",
-};
-
-addStation(station);
+// Load map component without SSR
+const AddStationMap = dynamic(
+  () => import("../../components/Host/AddStationMap"),
+  { ssr: false }
+);
 
 export default function AddStationPage() {
-  const addStation = useStore((s) => s.addStation);
-  const [form, setForm] = useState({ name: "", price: 10, plug: "Type 2", status: "Available", city: "", pincode: "" });
-  const [supportedVehicleTypes, setSupportedVehicleTypes] = useState(["scooter"]); // default
-  const [supportedModels, setSupportedModels] = useState([]);
+  /* -------------------------
+      FORM STATE
+  --------------------------*/
+  const [form, setForm] = useState({
+    name: "",
+    city: "",
+    pincode: "",
+    price: "",
+    plug: "Type 2",
+    status: "Available",
+  });
+
+  /* -------------------------
+      MAP PIN STATE
+  --------------------------*/
   const [pin, setPin] = useState(null);
 
-  function toggleType(t) {
-    setSupportedVehicleTypes(prev => prev.includes(t) ? prev.filter(x=>x!==t) : [...prev, t]);
-    setSupportedModels([]); // reset selections
+  /* -------------------------
+      VEHICLE SUPPORT
+  --------------------------*/
+  const [supportedVehicleTypes, setSupportedVehicleTypes] = useState([]);
+  const [supportedModels, setSupportedModels] = useState([]);
+
+  const addStation = useStore((s) => s.addStation);
+
+  function toggleVehicleType(type) {
+    setSupportedVehicleTypes((prev) =>
+      prev.includes(type)
+        ? prev.filter((t) => t !== type)
+        : [...prev, type]
+    );
   }
 
-  function onPick(pinLatLng, bboxString) {
-    setPin(pinLatLng);
-    // try reverse geocode for city/pincode quickly
-    fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${pinLatLng.lat}&lon=${pinLatLng.lng}`)
-      .then(r=>r.json()).then(j=>{
-        if (j && j.address) {
-          setForm(f => ({ ...f, city: j.address.city || j.address.town || j.address.village || j.address.county || "", pincode: j.address.postcode || "" }));
-        }
-      }).catch(()=>{});
+  function toggleModel(model) {
+    setSupportedModels((prev) =>
+      prev.includes(model)
+        ? prev.filter((m) => m !== model)
+        : [...prev, model]
+    );
   }
 
-  const handleSubmit = () => {
-    if (!pin) return alert("Place pin for station location.");
-    if (!form.name) return alert("Add station name");
-    if (supportedModels.length === 0) return alert("Select at least one supported model");
+  /* -------------------------
+      SUBMIT STATION
+  --------------------------*/
+  function submitStation() {
+    if (!pin) {
+      alert("Please select location on the map.");
+      return;
+    }
+
+    if (!form.name || !form.price) {
+      alert("Please fill all required fields.");
+      return;
+    }
 
     const station = {
+      id: uuidv4(),
       name: form.name,
-      lat: pin.lat,
-      lng: pin.lng,
+      lat: Number(pin.lat),
+      lng: Number(pin.lng),
       price: Number(form.price),
       plug: form.plug,
       status: form.status,
+      city: form.city,
+      pincode: form.pincode,
+
       supportedVehicleTypes,
       supportedModels,
-      city: form.city,
-      pincode: form.pincode
+
+      createdAt: Date.now(),
     };
 
     addStation(station);
-    alert("Station added");
-    window.location.href = "/host/stations";
-  };
 
-  // model lists depend on selected types
-  const modelOptions = (supportedVehicleTypes.includes("scooter") ? evScooters : []).concat(supportedVehicleTypes.includes("car") ? evCars : []);
+    alert("Station added successfully!");
+    window.location.href = "/host/dashboard";
+  }
 
+  /* -------------------------
+      RENDER COMPONENT
+  --------------------------*/
   return (
-    <div className="flex">
-      {/* sidebar same as before */}
-      <div className="ml-64 p-8 w-full">
-        <h1 className="text-3xl font-bold mb-4">Add Station (Map)</h1>
+    <div className="p-6 flex gap-6">
+      {/* MAP SECTION */}
+      <div className="w-1/2 h-[80vh] border rounded-xl overflow-hidden shadow">
+        {/* FIXED → use onPick to get coordinates */}
+        <AddStationMap onPick={(coords) => setPin(coords)} />
+      </div>
 
-        <div className="grid md:grid-cols-2 gap-6">
+      {/* FORM SECTION */}
+      <div className="w-1/2">
+        <h1 className="text-2xl font-bold mb-4">Add Charging Station</h1>
+
+        <div className="flex flex-col gap-4 bg-white p-6 rounded-xl shadow">
+
+          {/* Station Name */}
+          <input
+            className="border p-3 rounded"
+            placeholder="Station Name"
+            value={form.name}
+            onChange={(e) =>
+              setForm({ ...form, name: e.target.value })
+            }
+          />
+
+          {/* City */}
+          <input
+            className="border p-3 rounded"
+            placeholder="City"
+            value={form.city}
+            onChange={(e) =>
+              setForm({ ...form, city: e.target.value })
+            }
+          />
+
+          {/* Pincode */}
+          <input
+            className="border p-3 rounded"
+            placeholder="Pincode"
+            value={form.pincode}
+            onChange={(e) =>
+              setForm({ ...form, pincode: e.target.value })
+            }
+          />
+
+          {/* Price */}
+          <input
+            className="border p-3 rounded"
+            placeholder="Price (₹/kWh)"
+            type="number"
+            value={form.price}
+            onChange={(e) =>
+              setForm({ ...form, price: e.target.value })
+            }
+          />
+
+          {/* Plug Type */}
+          <select
+            className="border p-3 rounded"
+            value={form.plug}
+            onChange={(e) =>
+              setForm({ ...form, plug: e.target.value })
+            }
+          >
+            <option>Type 2</option>
+            <option>CCS2</option>
+            <option>GB/T</option>
+          </select>
+
+          {/* Status */}
+          <select
+            className="border p-3 rounded"
+            value={form.status}
+            onChange={(e) =>
+              setForm({ ...form, status: e.target.value })
+            }
+          >
+            <option>Available</option>
+            <option>Busy</option>
+            <option>Offline</option>
+          </select>
+
+          {/* Supported Vehicle Types */}
           <div>
-            <AddStationMap onPick={onPick} />
+            <h2 className="font-semibold mb-2">Supported Vehicle Types</h2>
+            <div className="flex gap-4">
+              <label>
+                <input
+                  type="checkbox"
+                  checked={supportedVehicleTypes.includes("scooter")}
+                  onChange={() => toggleVehicleType("scooter")}
+                />{" "}
+                Scooter
+              </label>
+
+              <label>
+                <input
+                  type="checkbox"
+                  checked={supportedVehicleTypes.includes("car")}
+                  onChange={() => toggleVehicleType("car")}
+                />{" "}
+                Car
+              </label>
+            </div>
           </div>
 
+          {/* Supported Models */}
           <div>
-            <div className="bg-white p-4 rounded shadow mb-4">
-              <input placeholder="Station name" value={form.name} onChange={e=>setForm({...form,name:e.target.value})} className="w-full border p-2 mb-2" />
-              <input placeholder="Price (₹/kWh)" type="number" value={form.price} onChange={e=>setForm({...form,price:e.target.value})} className="w-full border p-2 mb-2" />
-              <select value={form.plug} onChange={e=>setForm({...form,plug:e.target.value})} className="w-full border p-2 mb-2">
-                <option>Type 2</option>
-                <option>CCS2</option>
-                <option>GB/T</option>
-              </select>
-              <select value={form.status} onChange={e=>setForm({...form,status:e.target.value})} className="w-full border p-2 mb-2">
-                <option>Available</option>
-                <option>Busy</option>
-                <option>Offline</option>
-              </select>
+            <h2 className="font-semibold mb-2">Supported Models</h2>
 
-              <div className="mb-2">
-                <label className="font-semibold">Supported vehicle types</label>
-                <div className="flex gap-2 mt-2">
-                  <button onClick={()=>toggleType("scooter")} className={`px-3 py-1 rounded border ${supportedVehicleTypes.includes("scooter") ? "border-green-600" : ""}`}>Scooter</button>
-                  <button onClick={()=>toggleType("car")} className={`px-3 py-1 rounded border ${supportedVehicleTypes.includes("car") ? "border-green-600" : ""}`}>Car</button>
-                </div>
-              </div>
-
-              <div className="mb-2">
-                <label className="font-semibold">Supported models (pick multiple)</label>
-                <div className="max-h-40 overflow-auto grid grid-cols-1 gap-2 mt-2">
-                  {modelOptions.map((m,i)=>(
-                    <label key={i} className="flex items-center gap-2">
-                      <input type="checkbox" value={m.name} checked={supportedModels.includes(m.name)} onChange={(e)=>{
-                        const v = e.target.value;
-                        setSupportedModels(prev => prev.includes(v) ? prev.filter(x=>x!==v) : [...prev, v]);
-                      }} />
-                      <span>{m.name}</span>
-                    </label>
-                  ))}
-                </div>
-              </div>
-
-              <div className="mb-2">
-                <label className="font-semibold">Detected city / pincode</label>
-                <div>{form.city} {form.pincode && `• ${form.pincode}`}</div>
-              </div>
-
-              <div className="mt-4 flex gap-2">
-                <button onClick={handleSubmit} className="bg-green-600 text-white px-4 py-2 rounded">Add Station</button>
-                <button onClick={()=>{ setPin(null); }} className="px-4 py-2 border rounded">Cancel</button>
-              </div>
-            </div>
-
-            <div className="text-sm text-gray-500">
-              Tip: search for the region (e.g. "Bengaluru") and then place the pin in the exact location. The map draws the region boundary if available.
+            <div className="flex flex-wrap gap-3">
+              {[
+                "Ather 450X",
+                "Ather Rizta",
+                "OLA S1 Pro",
+                "TVS iQube",
+                "Ampere Magnus",
+                "Revolt RV400",
+                "Tata Nexon EV",
+                "Mahindra XUV400",
+              ].map((model) => (
+                <label key={model}>
+                  <input
+                    type="checkbox"
+                    checked={supportedModels.includes(model)}
+                    onChange={() => toggleModel(model)}
+                  />{" "}
+                  {model}
+                </label>
+              ))}
             </div>
           </div>
+
+          {/* SAVE BUTTON */}
+          <button
+            onClick={submitStation}
+            className="bg-green-600 text-white p-3 rounded"
+          >
+            Save Station
+          </button>
+
         </div>
-
       </div>
     </div>
   );
