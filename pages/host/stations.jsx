@@ -1,23 +1,33 @@
+"use client";
+
+import { useEffect } from "react";
 import HostSidebar from "../../components/Host/HostSidebar";
 import StationCard from "../../components/Host/StationCard";
+import { useStore } from "../../components/store";
 
 export default function HostStations() {
+  const stations = useStore((s) => s.stations);
+  const loadStationsFromLocal = useStore((s) => s.loadStationsFromLocal);
 
-  const stations = [
-    { name: "Ather Grid - Chennai", status: "Available", price: 12 },
-    { name: "Ola Hypercharger - Bangalore", status: "Busy", price: 10 }
-  ];
+  useEffect(() => {
+    loadStationsFromLocal();
+  }, []);
 
   return (
     <div className="flex">
       <HostSidebar />
-
       <div className="ml-64 p-8 w-full">
         <h1 className="text-3xl font-bold mb-6">My Stations</h1>
 
-        {stations.map((s, i) => (
-          <StationCard key={i} station={s} />
-        ))}
+        {stations.length === 0 && (
+          <p className="text-gray-500">No stations added yet.</p>
+        )}
+
+        <div className="flex flex-col gap-4">
+          {stations.map((s) => (
+            <StationCard key={s.id} station={s} />
+          ))}
+        </div>
       </div>
     </div>
   );

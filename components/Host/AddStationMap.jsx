@@ -5,12 +5,16 @@ import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 
-const pinIcon = new L.Icon({
-  iconUrl: "/charger.png",
-  iconSize: [36, 42],
+/* -------------------------------------------------------
+   RED PIN ICON (MAKE SURE /public/icons/red-pin.png EXISTS!)
+--------------------------------------------------------*/
+const pinIcon = L.icon({
+  iconUrl: "/icons/red-pin.png",
+  iconSize: [40, 45],
+  iconAnchor: [20, 45],
 });
 
-// ---------- MAP CLICK HANDLER ----------
+/* ---------- MAP CLICK HANDLER ---------- */
 function MapClickHandler({ onClick }) {
   const map = useMap();
 
@@ -20,14 +24,13 @@ function MapClickHandler({ onClick }) {
     };
 
     map.on("click", handleClick);
-
     return () => map.off("click", handleClick);
   }, [map, onClick]);
 
   return null;
 }
 
-// ---------- NOMINATIM SEARCH ----------
+/* ---------- NOMINATIM SEARCH ---------- */
 function NominatimSearch({ onResult }) {
   const [q, setQ] = useState("");
 
@@ -41,8 +44,7 @@ function NominatimSearch({ onResult }) {
     );
     const json = await res.json();
 
-    if (json && json.length > 0) onResult(json[0]);
-    else onResult(null);
+    onResult(json[0] || null);
   }
 
   return (
@@ -63,7 +65,7 @@ function NominatimSearch({ onResult }) {
   );
 }
 
-// ---------- MAIN COMPONENT ----------
+/* ---------- MAIN COMPONENT ---------- */
 export default function AddStationMap({ onPick }) {
   const mapRef = useRef();
   const [marker, setMarker] = useState(null);
@@ -73,7 +75,7 @@ export default function AddStationMap({ onPick }) {
     const map = mapRef.current;
     if (!map) return;
 
-    // Remove old shapes
+    // Remove previous polygons
     if (geoLayer) {
       geoLayer.remove();
       setGeoLayer(null);
@@ -84,7 +86,7 @@ export default function AddStationMap({ onPick }) {
       return;
     }
 
-    // Draw polygon if present
+    // Draw polygon region
     if (result.geojson) {
       const layer = L.geoJSON(result.geojson, {
         style: { color: "#0066cc", weight: 2, fillOpacity: 0.05 },
@@ -92,23 +94,21 @@ export default function AddStationMap({ onPick }) {
 
       map.fitBounds(layer.getBounds());
       setGeoLayer(layer);
-    } else {
-      // fallback bounding box
-      if (result.boundingbox) {
-        const b = result.boundingbox.map(Number);
-        const poly = L.polygon(
-          [
-            [b[0], b[2]],
-            [b[0], b[3]],
-            [b[1], b[3]],
-            [b[1], b[2]],
-          ],
-          { color: "#0066cc", weight: 2, fillOpacity: 0.05 }
-        ).addTo(map);
+    } else if (result.boundingbox) {
+      const b = result.boundingbox.map(Number);
 
-        map.fitBounds(poly.getBounds());
-        setGeoLayer(poly);
-      }
+      const poly = L.polygon(
+        [
+          [b[0], b[2]],
+          [b[0], b[3]],
+          [b[1], b[3]],
+          [b[1], b[2]],
+        ],
+        { color: "#0066cc", weight: 2, fillOpacity: 0.05 }
+      ).addTo(map);
+
+      map.fitBounds(poly.getBounds());
+      setGeoLayer(poly);
     }
   }
 
@@ -125,7 +125,11 @@ export default function AddStationMap({ onPick }) {
         >
           <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
 
-          <MapClickHandler onClick={(pos) => setMarker(pos)} />
+          <MapClickHandler
+            onClick={(pos) => {
+              setMarker(pos);
+            }}
+          />
 
           {marker && (
             <Marker position={[marker.lat, marker.lng]} icon={pinIcon} draggable>

@@ -6,12 +6,6 @@ import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import { useStore } from "../../components/store";
 
-// simple marker icon
-const pinIcon = new L.Icon({
-  iconUrl: "/charger.png",
-  iconSize: [36, 42],
-});
-
 function NominatimSearch({ onResult }) {
   const [q, setQ] = useState("");
   const searching = useRef(false);

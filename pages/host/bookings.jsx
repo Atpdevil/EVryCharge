@@ -3,10 +3,7 @@ import BookingRow from "../../components/Host/BookingRow";
 
 export default function HostBookings() {
 
-  const bookings = [
-    { user: "Kishore", station: "Ather Grid - Chennai", date: "20 Nov", time: "4 PM", status: "Upcoming" },
-    { user: "Arun", station: "Ola Hypercharger - Bangalore", date: "18 Nov", time: "2 PM", status: "Completed" }
-  ];
+  const bookings = [];
 
   return (
     <div className="flex">

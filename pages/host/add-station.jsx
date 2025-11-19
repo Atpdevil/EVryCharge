@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import dynamic from "next/dynamic";
 import { useStore } from "../../components/store";
 import { v4 as uuidv4 } from "uuid";
@@ -22,6 +22,10 @@ export default function AddStationPage() {
     price: "",
     plug: "Type 2",
     status: "Available",
+
+    // NEW DEFAULTS (important for filters)
+    supportedModels: [],
+    supportedVehicleTypes: [],
   });
 
   /* -------------------------
@@ -30,28 +34,14 @@ export default function AddStationPage() {
   const [pin, setPin] = useState(null);
 
   /* -------------------------
-      VEHICLE SUPPORT
+      STORE FUNCTIONS
   --------------------------*/
-  const [supportedVehicleTypes, setSupportedVehicleTypes] = useState([]);
-  const [supportedModels, setSupportedModels] = useState([]);
-
   const addStation = useStore((s) => s.addStation);
+  const loadStationsFromLocal = useStore((s) => s.loadStationsFromLocal);
 
-  function toggleVehicleType(type) {
-    setSupportedVehicleTypes((prev) =>
-      prev.includes(type)
-        ? prev.filter((t) => t !== type)
-        : [...prev, type]
-    );
-  }
-
-  function toggleModel(model) {
-    setSupportedModels((prev) =>
-      prev.includes(model)
-        ? prev.filter((m) => m !== model)
-        : [...prev, model]
-    );
-  }
+  useEffect(() => {
+    loadStationsFromLocal();
+  }, []);
 
   /* -------------------------
       SUBMIT STATION
@@ -70,16 +60,20 @@ export default function AddStationPage() {
     const station = {
       id: uuidv4(),
       name: form.name,
+
+      // coordinates from map pin
       lat: Number(pin.lat),
       lng: Number(pin.lng),
+
       price: Number(form.price),
       plug: form.plug,
       status: form.status,
       city: form.city,
       pincode: form.pincode,
 
-      supportedVehicleTypes,
-      supportedModels,
+      // VERY IMPORTANT for User Map filters
+      supportedModels: form.supportedModels || [],
+      supportedVehicleTypes: form.supportedVehicleTypes || [],
 
       createdAt: Date.now(),
     };
@@ -97,7 +91,6 @@ export default function AddStationPage() {
     <div className="p-6 flex gap-6">
       {/* MAP SECTION */}
       <div className="w-1/2 h-[80vh] border rounded-xl overflow-hidden shadow">
-        {/* FIXED → use onPick to get coordinates */}
         <AddStationMap onPick={(coords) => setPin(coords)} />
       </div>
 
@@ -106,133 +99,64 @@ export default function AddStationPage() {
         <h1 className="text-2xl font-bold mb-4">Add Charging Station</h1>
 
         <div className="flex flex-col gap-4 bg-white p-6 rounded-xl shadow">
-
-          {/* Station Name */}
           <input
             className="border p-3 rounded"
             placeholder="Station Name"
             value={form.name}
-            onChange={(e) =>
-              setForm({ ...form, name: e.target.value })
-            }
+            onChange={(e) => setForm({ ...form, name: e.target.value })}
           />
 
-          {/* City */}
           <input
             className="border p-3 rounded"
             placeholder="City"
             value={form.city}
-            onChange={(e) =>
-              setForm({ ...form, city: e.target.value })
-            }
+            onChange={(e) => setForm({ ...form, city: e.target.value })}
           />
 
-          {/* Pincode */}
           <input
             className="border p-3 rounded"
             placeholder="Pincode"
             value={form.pincode}
-            onChange={(e) =>
-              setForm({ ...form, pincode: e.target.value })
-            }
+            onChange={(e) => setForm({ ...form, pincode: e.target.value })}
           />
 
-          {/* Price */}
           <input
             className="border p-3 rounded"
             placeholder="Price (₹/kWh)"
             type="number"
             value={form.price}
-            onChange={(e) =>
-              setForm({ ...form, price: e.target.value })
-            }
+            onChange={(e) => setForm({ ...form, price: e.target.value })}
           />
 
-          {/* Plug Type */}
           <select
             className="border p-3 rounded"
             value={form.plug}
-            onChange={(e) =>
-              setForm({ ...form, plug: e.target.value })
-            }
+            onChange={(e) => setForm({ ...form, plug: e.target.value })}
           >
             <option>Type 2</option>
             <option>CCS2</option>
             <option>GB/T</option>
           </select>
 
-          {/* Status */}
           <select
             className="border p-3 rounded"
             value={form.status}
-            onChange={(e) =>
-              setForm({ ...form, status: e.target.value })
-            }
+            onChange={(e) => setForm({ ...form, status: e.target.value })}
           >
             <option>Available</option>
             <option>Busy</option>
             <option>Offline</option>
           </select>
 
-          {/* Supported Vehicle Types */}
-          <div>
-            <h2 className="font-semibold mb-2">Supported Vehicle Types</h2>
-            <div className="flex gap-4">
-              <label>
-                <input
-                  type="checkbox"
-                  checked={supportedVehicleTypes.includes("scooter")}
-                  onChange={() => toggleVehicleType("scooter")}
-                />{" "}
-                Scooter
-              </label>
+          {/* optional future fields */}
+          {/* supportedModels and supportedVehicleTypes stay empty for now */}
 
-              <label>
-                <input
-                  type="checkbox"
-                  checked={supportedVehicleTypes.includes("car")}
-                  onChange={() => toggleVehicleType("car")}
-                />{" "}
-                Car
-              </label>
-            </div>
-          </div>
-
-          {/* Supported Models */}
-          <div>
-            <h2 className="font-semibold mb-2">Supported Models</h2>
-
-            <div className="flex flex-wrap gap-3">
-              {[
-                "Ather 450X",
-                "Ather Rizta",
-                "OLA S1 Pro",
-                "TVS iQube",
-                "Ampere Magnus",
-                "Revolt RV400",
-                "Tata Nexon EV",
-                "Mahindra XUV400",
-              ].map((model) => (
-                <label key={model}>
-                  <input
-                    type="checkbox"
-                    checked={supportedModels.includes(model)}
-                    onChange={() => toggleModel(model)}
-                  />{" "}
-                  {model}
-                </label>
-              ))}
-            </div>
-          </div>
-
-          {/* SAVE BUTTON */}
           <button
             onClick={submitStation}
             className="bg-green-600 text-white p-3 rounded"
           >
             Save Station
           </button>
-
         </div>
       </div>
     </div>

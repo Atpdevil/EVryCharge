@@ -6,20 +6,7 @@ import WalletCard from "../../components/User/WalletCard";
 export default function UserHome() {
   const [user, setUser] = useState(null);
 
-  const exampleBookings = [
-    {
-      station: "Ather Grid - Chennai",
-      date: "20 Nov 2025",
-      time: "4:00 PM",
-      status: "Upcoming",
-    },
-    {
-      station: "Ola Hypercharger - Bangalore",
-      date: "10 Nov 2025",
-      time: "2:00 PM",
-      status: "Completed",
-    },
-  ];
+  const exampleBookings = [];
 
   useEffect(() => {
     const stored = localStorage.getItem("ev_user");

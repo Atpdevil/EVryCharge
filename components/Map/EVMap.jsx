@@ -2,11 +2,6 @@ import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import L from "leaflet";
 import chargers from "../../data/chargers.json";
 
-const chargerIcon = new L.Icon({
-  iconUrl: "/charger.png",
-  iconSize: [35, 40]
-});
-
 export default function EVMap() {
   return (
     <MapContainer center={[20.5937, 78.9629]} zoom={5} className="h-full w-full">

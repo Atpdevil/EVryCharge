@@ -1,4 +1,5 @@
 import { create } from "zustand";
+import { persist } from "zustand/middleware";
 import { v4 as uuidv4 } from "uuid";
 
 export const useStore = create((set, get) => ({
@@ -127,6 +128,20 @@ export const useStore = create((set, get) => ({
         ss.id === id ? { ...ss, ...data } : ss
       ),
     })),
+
+    deleteStation: (id) => {
+  set((s) => ({ stations: s.stations.filter((st) => st.id !== id) }));
+  setTimeout(() => get().saveStationsToLocal(), 20);
+},
+
+    updateStation: (id, data) => {
+  set((s) => ({
+    stations: s.stations.map((st) =>
+      st.id === id ? { ...st, ...data } : st
+    ),
+  }));
+  setTimeout(() => get().saveStationsToLocal(), 20);
+},
 
   endSession: (id) => {
     const store = get();
