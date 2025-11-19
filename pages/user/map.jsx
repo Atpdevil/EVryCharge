@@ -5,7 +5,8 @@ import UserSidebar from "../../components/User/UserSidebar";
 import { useStore } from "../../components/store";
 import { useEffect } from "react";
 
-const UserMapCore = dynamic(
+// dynamic map import
+const UserMapCoreDynamic = dynamic(
   () => import("../../components/Map/UserMapCore"),
   { ssr: false }
 );
@@ -18,9 +19,12 @@ export default function UserMap() {
   }, []);
 
   return (
-    <div className="flex">
+    <div className="flex min-h-screen">
       <UserSidebar />
-      <UserMapCore />
+
+      <div className="ml-64 p-6 w-full">
+        <UserMapCoreDynamic />
+      </div>
     </div>
   );
 }

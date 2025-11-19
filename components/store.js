@@ -1,91 +1,67 @@
 import { create } from "zustand";
-import { persist } from "zustand/middleware";
 import { v4 as uuidv4 } from "uuid";
 
+/* LocalStorage helpers */
+const put = (k, v) => localStorage.setItem(k, JSON.stringify(v));
+const getJSON = (k, fb) => {
+  try {
+    const x = localStorage.getItem(k);
+    return x ? JSON.parse(x) : fb;
+  } catch {
+    return fb;
+  }
+};
+
+const STATIONS_KEY = "ev_stations_v1";
+const BOOKINGS_KEY = "ev_bookings_v1";
+const VEHICLE_TYPE_KEY = "ev_vehicle_type";
+const VEHICLE_SELECTED_KEY = "ev_selected_vehicle";
+
+/* ============================================================
+   MAIN STORE
+============================================================ */
 export const useStore = create((set, get) => ({
 
-  /* =============================
-       WALLET
-  ==============================*/
+  /* ============================================================
+        WALLET
+  ============================================================ */
   wallet: 750,
   addMoney: (amount) =>
     set((s) => ({ wallet: s.wallet + Number(amount) })),
 
-  /* =============================
-      VEHICLE TYPE (car / scooter)
-  ==============================*/
+  /* ============================================================
+        VEHICLE TYPE (Car / Scooter)
+  ============================================================ */
   vehicleType: null,
-  setVehicleType: (type) => {
-    set({ vehicleType: type });
-    localStorage.setItem("ev_vehicle_type", JSON.stringify(type));
+  setVehicleType: (t) => {
+    set({ vehicleType: t });
+    put(VEHICLE_TYPE_KEY, t);
   },
 
-  /* =============================
-      SELECTED VEHICLE MODEL
-  ==============================*/
   selectedVehicle: null,
   setSelectedVehicle: (v) => {
     set({ selectedVehicle: v });
-    localStorage.setItem("ev_selected_vehicle", JSON.stringify(v));
+    put(VEHICLE_SELECTED_KEY, v);
   },
 
-  // Load vehicle from localStorage on startup
   loadVehicleFromLocal: () => {
-    try {
-      const t = localStorage.getItem("ev_vehicle_type");
-      const v = localStorage.getItem("ev_selected_vehicle");
-      if (t) set({ vehicleType: JSON.parse(t) });
-      if (v) set({ selectedVehicle: JSON.parse(v) });
-    } catch (e) {
-      console.error("loadVehicleFromLocal error", e);
-    }
+    set({
+      vehicleType: getJSON(VEHICLE_TYPE_KEY, null),
+      selectedVehicle: getJSON(VEHICLE_SELECTED_KEY, null)
+    });
   },
 
-  /* =============================
-      BOOKINGS
-  ==============================*/
-  bookings: [],
-
-  createBooking: (booking) => {
-    const b = {
-      id: uuidv4(),
-      status: "Booked",
-      createdAt: Date.now(),
-      ...booking,
-    };
-    set((s) => ({ bookings: [b, ...s.bookings] }));
-    return b;
-  },
-
-  cancelBooking: (id) =>
-    set((s) => ({
-      bookings: s.bookings.map((b) =>
-        b.id === id ? { ...b, status: "Cancelled" } : b
-      ),
-    })),
-
-  /* =============================
-      HOST STATIONS
-  ==============================*/
-
-  stations: [], // THIS WILL CONTAIN HOST-ADDED STATIONS
+  /* ============================================================
+        STATIONS
+  ============================================================ */
+  stations: [],
 
   loadStationsFromLocal: () => {
-    try {
-      const raw = localStorage.getItem("ev_stations_v1");
-      if (raw) set({ stations: JSON.parse(raw) });
-    } catch (e) {
-      console.error("loadStationsFromLocal", e);
-    }
+    set({ stations: getJSON(STATIONS_KEY, []) });
   },
 
   saveStationsToLocal: () => {
-    try {
-      const s = get().stations;
-      localStorage.setItem("ev_stations_v1", JSON.stringify(s));
-    } catch (e) {
-      console.error("saveStationsToLocal", e);
-    }
+    put(STATIONS_KEY, get().stations);
   },
 
   addStation: (station) => {
@@ -93,24 +69,76 @@ export const useStore = create((set, get) => ({
       id: uuidv4(),
       createdAt: Date.now(),
       ...station,
+      lat: Number(station.lat),
+      lng: Number(station.lng),
     };
 
-    // Add station to store
-    set((s) => ({ stations: [st, ...s.stations] }));
-
-    // Save to localStorage (slight delay so state updates first)
-    setTimeout(() => get().saveStationsToLocal(), 50);
-
+    const updated = [st, ...get().stations];
+    set({ stations: updated });
+    put(STATIONS_KEY, updated);
     return st;
   },
 
-  /* =============================
-      CHARGING SESSIONS
-  ==============================*/
+  updateStation: (id, data) => {
+    const updated = get().stations.map((st) =>
+      st.id === id ? { ...st, ...data } : st
+    );
+    set({ stations: updated });
+    put(STATIONS_KEY, updated);
+  },
+
+  deleteStation: (id) => {
+    const updated = get().stations.filter((st) => st.id !== id);
+    set({ stations: updated });
+    put(STATIONS_KEY, updated);
+  },
+
+  /* ============================================================
+        BOOKINGS
+  ============================================================ */
+  bookings: [],
+
+  loadBookingsFromLocal: () => {
+    set({ bookings: getJSON(BOOKINGS_KEY, []) });
+  },
+
+  addBooking: (booking) => {
+    const updated = [...get().bookings, booking];
+    set({ bookings: updated });
+    put(BOOKINGS_KEY, updated);
+    return booking;
+  },
+
+  createBooking: (payload) => {
+    const booking = {
+      id: uuidv4(),
+      createdAt: Date.now(),
+      status: "Booked",
+      ...payload,
+    };
+
+    const updated = [booking, ...get().bookings];
+    set({ bookings: updated });
+    put(BOOKINGS_KEY, updated);
+
+    return booking;
+  },
+
+  cancelBooking: (id) => {
+    const updated = get().bookings.map((b) =>
+      b.id === id ? { ...b, status: "Cancelled" } : b
+    );
+    set({ bookings: updated });
+    put(BOOKINGS_KEY, updated);
+  },
+
+  /* ============================================================
+        SESSIONS
+  ============================================================ */
   sessions: [],
 
   startSession: (session) => {
-    const s = {
+    const newS = {
       id: uuidv4(),
       startedAt: Date.now(),
       kwh: 0,
@@ -118,30 +146,17 @@ export const useStore = create((set, get) => ({
       ...session,
     };
 
-    set((st) => ({ sessions: [...st.sessions, s] }));
-    return s;
+    set((s) => ({ sessions: [...s.sessions, newS] }));
+    return newS;
   },
 
-  updateSession: (id, data) =>
+  updateSession: (id, data) => {
     set((s) => ({
       sessions: s.sessions.map((ss) =>
         ss.id === id ? { ...ss, ...data } : ss
       ),
-    })),
-
-    deleteStation: (id) => {
-  set((s) => ({ stations: s.stations.filter((st) => st.id !== id) }));
-  setTimeout(() => get().saveStationsToLocal(), 20);
-},
-
-    updateStation: (id, data) => {
-  set((s) => ({
-    stations: s.stations.map((st) =>
-      st.id === id ? { ...st, ...data } : st
-    ),
-  }));
-  setTimeout(() => get().saveStationsToLocal(), 20);
-},
+    }));
+  },
 
   endSession: (id) => {
     const store = get();
@@ -151,7 +166,6 @@ export const useStore = create((set, get) => ({
     const finalCost = session.kwh * session.pricePerKwh;
 
     if (store.wallet >= finalCost) {
-      // Enough money → deduct wallet
       set((st) => ({
         wallet: st.wallet - finalCost,
         sessions: st.sessions.filter((s) => s.id !== id),
@@ -164,7 +178,6 @@ export const useStore = create((set, get) => ({
 
       return { success: true, amount: finalCost };
     } else {
-      // Not enough money
       set((st) => ({
         sessions: st.sessions.filter((s) => s.id !== id),
         bookings: st.bookings.map((b) =>

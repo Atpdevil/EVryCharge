@@ -1,48 +1,49 @@
 "use client";
-import { useEffect } from "react";
-import { useMap } from "react-leaflet";
-import L from "leaflet";
 
-const userIcon = L.icon({
-  iconUrl: "https://unpkg.com/leaflet@1.9.3/dist/images/marker-icon.png",
-  iconSize: [25, 41],
-  iconAnchor: [12, 41]
-});
+import { useEffect, useRef } from "react";
 
-export default function LiveLocationMarker({ setUserPos }) {
-  const map = useMap();
+export default function LiveLocationMarker({ setUserPos, googleMapRef }) {
+  const markerRef = useRef(null);
 
   useEffect(() => {
-    if (!map || !navigator.geolocation) return;
+    if (!navigator.geolocation) return;
 
-    let marker = null;
+    const watchId = navigator.geolocation.watchPosition(
+      (pos) => {
+        const lat = pos.coords.latitude;
+        const lng = pos.coords.longitude;
 
-    const success = (pos) => {
-      const lat = pos.coords.latitude;
-      const lng = pos.coords.longitude;
-      setUserPos([lat, lng]);
+        setUserPos([lat, lng]);
 
-      if (!marker) {
-        marker = L.marker([lat, lng], { icon: userIcon }).addTo(map);
-        map.setView([lat, lng], 14);
-      } else {
-        marker.setLatLng([lat, lng]);
-      }
-    };
+        if (!googleMapRef.current) return;
 
-    const err = (e) => console.warn("Location error", e);
+        // create marker ONCE
+        if (!markerRef.current) {
+          markerRef.current = new window.google.maps.Marker({
+            position: { lat, lng },
+            map: googleMapRef.current,
+            icon: {
+              path: window.google.maps.SymbolPath.CIRCLE,
+              fillColor: "#4285F4",
+              fillOpacity: 1,
+              strokeColor: "white",
+              strokeWeight: 2,
+              scale: 7,
+            },
+          });
 
-    const watcher = navigator.geolocation.watchPosition(success, err, {
-      enableHighAccuracy: true,
-      timeout: 5000,
-      maximumAge: 1000,
-    });
+          googleMapRef.current.setCenter({ lat, lng });
+        } else {
+          // update live location marker
+          markerRef.current.setPosition({ lat, lng });
+        }
+      },
+      () => {},
+      { enableHighAccuracy: true }
+    );
 
-    return () => {
-      navigator.geolocation.clearWatch(watcher);
-      if (marker) map.removeLayer(marker);
-    };
-  }, [map, setUserPos]);
+    return () => navigator.geolocation.clearWatch(watchId);
+  }, []);
 
   return null;
 }

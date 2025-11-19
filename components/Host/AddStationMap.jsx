@@ -5,9 +5,6 @@ import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 
-/* -------------------------------------------------------
-   RED PIN ICON (MAKE SURE /public/icons/red-pin.png EXISTS!)
---------------------------------------------------------*/
 const pinIcon = L.icon({
   iconUrl: "/icons/red-pin.png",
   iconSize: [40, 45],

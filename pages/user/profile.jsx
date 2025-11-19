@@ -1,3 +1,5 @@
+"use client";
+
 import { useEffect, useState } from "react";
 import UserSidebar from "../../components/User/UserSidebar";
 import ProfileCard from "../../components/User/ProfileCard";
@@ -13,7 +15,6 @@ export default function UserProfile() {
   return (
     <div className="flex">
       <UserSidebar />
-
       <div className="ml-64 p-8 w-full">
         <h1 className="text-3xl font-bold mb-6">My Profile</h1>
         <ProfileCard user={user} />
