@@ -46,6 +46,18 @@ export default function UserHome() {
                 <p><b>Status:</b> {upcoming.status}</p>
 
                 <button
+                  className="mt-3 p-2 bg-green-600 text-white rounded mr-2"
+                  onClick={() =>
+                    window.open(
+                      `https://www.google.com/maps?q=${upcoming.stationLat},${upcoming.stationLng}`,
+                      "_blank"
+                    )
+                  }
+                >
+                  View on Map
+                </button>
+
+                <button
                   onClick={() => cancelBooking(upcoming.id)}
                   className="mt-4 px-4 py-2 bg-red-600 text-white rounded"
                 >
