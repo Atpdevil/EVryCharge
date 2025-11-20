@@ -2,8 +2,8 @@
 
 - EVryCharge is a full-stack simulation of an EV charging platform built using Next.js, Zustand, and LocalStorage
 - It provides two roles:
-    - EV User – finds chargers, books slots, manages wallet, profile.
-    - Charger Host – adds stations, edits them, views bookings, tracks earnings.
+  - EV User – finds chargers, books slots, manages wallet, profile.
+  - Charger Host – adds stations, edits them, views bookings, tracks earnings.
 - The project mimics a real EV platform workflow, including station creation, booking system, cancellation, host revenue, and location-based selection using Leaflet Maps
 
 Project Structure
@@ -52,7 +52,6 @@ EVryCharge/
 │   │   ├── dashboard.jsx
 │   │   ├── add-station.jsx
 │   │   ├── stations.jsx
-│   │   ├── bookings.jsx   (Removed if user requested)
 │   │   ├── earnings.jsx
 │   │
 │   ├── login/
@@ -70,7 +69,7 @@ EVryCharge/
 │   ├── _app.js
 │
 ├── public/
-│   ├── icons/ (Leaflet markers and UI icons)
+│   ├── icons/
 │
 ├── styles/
 │   ├── globals.css
@@ -83,7 +82,7 @@ EVryCharge/
 
 ## Zustand Store Overview (store.js)
 
-### Your store handles all app logic:
+### Your store handles all app logic
 
 #### Stations
 
@@ -113,7 +112,7 @@ EVryCharge/
 
 ## Map System (Leaflet)
 
-### Features:
+### Features
 
 - Search location via Nominatim API
 - Click map to drop station pin
@@ -122,7 +121,7 @@ EVryCharge/
 - View station on Google Maps via URL
 - Fix for Leaflet default icons
 
-#### Used in:
+#### Used in
 
 ```bash
 /components/Host/AddStationMap.jsx
@@ -154,7 +153,7 @@ Find Chargers (/pages/user/map.jsx)
 - Select charging duration
 - Creates booking in Zustand
 
-#### My Bookings
+### My Bookings
 
 - List all bookings
 - View on map
@@ -162,7 +161,7 @@ Find Chargers (/pages/user/map.jsx)
 
 ## Host Features
 
-#### Dashboard
+### Dashboard
 
 - Today’s total earnings
 - List of host stations
@@ -194,19 +193,19 @@ ev_user             → Logged-in user
 
 ### Running the Project
 
-1. Install packages
+Install packages
 
 ```bash
 npm install
 ```
 
-2. Run development server
+Run development server
 
 ```bash
 npm run dev
 ```
 
-3. Open in browser
+Open in browser
 
 ```bash
 http://localhost:3000
