@@ -19,6 +19,9 @@ export default function HostDashboard() {
     loadStationsFromLocal();
   }, []);
 
+  // compute today's earnings from stations (sum)
+  const todaysEarnings = stations.reduce((acc, s) => acc + (s.revenue || 0), 0);
+
   return (
     <div className="flex min-h-screen">
       <HostSidebar />
@@ -27,8 +30,9 @@ export default function HostDashboard() {
         <h1 className="text-3xl font-bold">Welcome {user?.name || "Host"}</h1>
         <p className="text-gray-600 mb-6">Here's your station overview.</p>
 
-        <div className="grid md:grid-cols-2 gap-6">
-          <EarningsCard amount={1250} />
+        {/* items-start keeps the left card from stretching */}
+        <div className="grid md:grid-cols-2 gap-6 items-start">
+          <EarningsCard amount={Math.round(todaysEarnings)} />
 
           <div className="bg-white p-6 rounded-lg shadow-md">
             <h3 className="text-xl font-semibold mb-4">Your Stations</h3>

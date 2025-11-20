@@ -3,5 +3,6 @@ export const evScooters = [
   { name: "Ather 450X", image: "/vehicles/ather.png" },
   { name: "TVS iQube", image: "/vehicles/iqube.png" },
   { name: "Bajaj Chetak", image: "/vehicles/chetak.png" },
-  { name: "Hero Vida V1", image: "/vehicles/vida.png" }
+  { name: "Hero Vida V1", image: "/vehicles/vida.png" },
+  { name: "Revolt RV400", image: "/vehicles/revolt.png" }
 ];

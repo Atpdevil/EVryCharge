@@ -9,7 +9,6 @@ export default function HostSidebar() {
         <Link href="/host/dashboard" className="text-gray-700 hover:text-green-600">Dashboard</Link>
         <Link href="/host/add-station" className="text-gray-700 hover:text-green-600">Add Station</Link>
         <Link href="/host/stations" className="text-gray-700 hover:text-green-600">My Stations</Link>
-        <Link href="/host/bookings" className="text-gray-700 hover:text-green-600">Bookings</Link>
         <Link href="/host/earnings" className="text-gray-700 hover:text-green-600">Earnings</Link>
 
         <button

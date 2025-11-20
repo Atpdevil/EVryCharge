@@ -5,13 +5,21 @@ import { useStore } from "../store";
 export default function StationCard({ station }) {
   const deleteStation = useStore((s) => s.deleteStation);
   const updateStation = useStore((s) => s.updateStation);
+  const bookings = useStore((s) => s.bookings);
 
   const [isEditing, setIsEditing] = useState(false);
+  const [showUserInfo, setShowUserInfo] = useState(false);
+
   const [editData, setEditData] = useState({
     name: station.name,
     price: station.price,
     status: station.status,
   });
+
+  // Get latest booking for this station
+  const latestBooking = bookings
+    .filter((b) => b.stationId === station.id)
+    .sort((a, b) => b.createdAt - a.createdAt)[0];
 
   function saveEdit() {
     updateStation(station.id, editData);
@@ -20,6 +28,31 @@ export default function StationCard({ station }) {
 
   return (
     <div className="border rounded-lg p-4 shadow-sm bg-white">
+
+      {/* ---------- USER POPUP ---------- */}
+      {showUserInfo && latestBooking && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-white p-6 rounded shadow-xl w-[350px]">
+            <h3 className="text-xl font-semibold mb-3">User Information</h3>
+
+            <p><b>Name:</b> {latestBooking.userName}</p>
+            <p><b>Email:</b> {latestBooking.userEmail}</p>
+            <p><b>Date:</b> {latestBooking.date}</p>
+            <p><b>Time:</b> {latestBooking.time}</p>
+            <p><b>Duration:</b> {latestBooking.durationMinutes} min</p>
+            <p><b>Status:</b> {latestBooking.status}</p>
+
+            <button
+              onClick={() => setShowUserInfo(false)}
+              className="mt-4 bg-green-600 text-white px-4 py-2 rounded"
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* ---------- NORMAL CARD ---------- */}
       {!isEditing ? (
         <>
           <h2 className="text-xl font-semibold">{station.name}</h2>
@@ -27,17 +60,14 @@ export default function StationCard({ station }) {
           <p className="text-gray-600">Status: {station.status}</p>
           <p className="text-gray-600">Price: ₹{station.price}/kWh</p>
 
-          {/* Revenue placeholder */}
           <p className="text-gray-600 mt-1">
             Revenue: <span className="font-semibold">₹{station.revenue || 0}</span>
           </p>
 
-          {/* Booking count placeholder */}
           <p className="text-gray-600">
             Bookings: <span className="font-semibold">{station.bookings || 0}</span>
           </p>
 
-          {/* View on Map */}
           <button
             className="mt-3 p-2 bg-green-500 text-white rounded mr-2"
             onClick={() =>
@@ -50,7 +80,6 @@ export default function StationCard({ station }) {
             View on Map
           </button>
 
-          {/* Edit */}
           <button
             className="mt-3 p-2 bg-green-500 text-white rounded mr-2"
             onClick={() => setIsEditing(true)}
@@ -58,13 +87,22 @@ export default function StationCard({ station }) {
             Edit
           </button>
 
-          {/* Delete */}
           <button
             className="mt-3 p-2 bg-green-500 text-white rounded mr-2"
             onClick={() => deleteStation(station.id)}
           >
             Delete
           </button>
+
+          {/* ⭐ SHOW ONLY IF BOOKINGS > 0 */}
+          {station.bookings > 0 && (
+            <button
+              className="p-2 bg-green-600 text-white rounded"
+              onClick={() => setShowUserInfo(true)}
+            >
+              View User Info
+            </button>
+          )}
         </>
       ) : (
         <>

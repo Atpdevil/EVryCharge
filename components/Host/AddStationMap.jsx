@@ -11,7 +11,7 @@ const pinIcon = L.icon({
   iconAnchor: [20, 45],
 });
 
-/* ---------- MAP CLICK HANDLER ---------- */
+/* ---------------------------- MAP CLICK HANDLER ---------------------------- */
 function MapClickHandler({ onClick }) {
   const map = useMap();
 
@@ -27,21 +27,22 @@ function MapClickHandler({ onClick }) {
   return null;
 }
 
-/* ---------- NOMINATIM SEARCH ---------- */
+/* --------------------------- NOMINATIM SEARCH BAR -------------------------- */
 function NominatimSearch({ onResult }) {
   const [q, setQ] = useState("");
 
   async function searchArea() {
     if (!q.trim()) return;
 
-    const res = await fetch(
+    const req = await fetch(
       `https://nominatim.openstreetmap.org/search?format=json&polygon_geojson=1&q=${encodeURIComponent(
         q
       )}`
     );
-    const json = await res.json();
 
-    onResult(json[0] || null);
+    const res = await req.json();
+
+    onResult(res[0] || null);
   }
 
   return (
@@ -62,28 +63,29 @@ function NominatimSearch({ onResult }) {
   );
 }
 
-/* ---------- MAIN COMPONENT ---------- */
+/* ------------------------------- MAIN MAP UI ------------------------------- */
 export default function AddStationMap({ onPick }) {
   const mapRef = useRef();
   const [marker, setMarker] = useState(null);
   const [geoLayer, setGeoLayer] = useState(null);
 
+  /* ----------- HANDLE SEARCH RESULT (POLYGON OR BOUNDING BOX) ------------ */
   async function handleAreaResult(result) {
     const map = mapRef.current;
     if (!map) return;
 
-    // Remove previous polygons
     if (geoLayer) {
       geoLayer.remove();
       setGeoLayer(null);
     }
 
+    // Reset view
     if (!result) {
       map.setView([20.5937, 78.9629], 5);
       return;
     }
 
-    // Draw polygon region
+    // Region polygon
     if (result.geojson) {
       const layer = L.geoJSON(result.geojson, {
         style: { color: "#0066cc", weight: 2, fillOpacity: 0.05 },
@@ -91,15 +93,18 @@ export default function AddStationMap({ onPick }) {
 
       map.fitBounds(layer.getBounds());
       setGeoLayer(layer);
-    } else if (result.boundingbox) {
-      const b = result.boundingbox.map(Number);
+    }
+
+    // Fallback bounding box
+    else if (result.boundingbox) {
+      const bb = result.boundingbox.map(Number);
 
       const poly = L.polygon(
         [
-          [b[0], b[2]],
-          [b[0], b[3]],
-          [b[1], b[3]],
-          [b[1], b[2]],
+          [bb[0], bb[2]],
+          [bb[0], bb[3]],
+          [bb[1], bb[3]],
+          [bb[1], bb[2]],
         ],
         { color: "#0066cc", weight: 2, fillOpacity: 0.05 }
       ).addTo(map);
@@ -113,38 +118,49 @@ export default function AddStationMap({ onPick }) {
     <div>
       <NominatimSearch onResult={handleAreaResult} />
 
-      <div className="h-[60vh] w-full mb-3">
+      {/* THE CONTAINER MUST BE RELATIVE (to make button float correctly) */}
+      <div className="relative h-[60vh] w-full mb-10">
         <MapContainer
           whenCreated={(map) => (mapRef.current = map)}
           center={[13.0827, 80.2707]}
           zoom={13}
-          className="h-full w-full"
+          className="h-full w-full rounded-lg z-0"
         >
           <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
 
-          <MapClickHandler
-            onClick={(pos) => {
-              setMarker(pos);
-            }}
-          />
+                  <MapClickHandler
+          onClick={(pos) => {
+            setMarker(pos);
+
+            const map = mapRef.current;
+            if (map && map.setView) {
+              map.setView([pos.lat, pos.lng], 15);
+            }
+          }}
+        />
 
           {marker && (
             <Marker position={[marker.lat, marker.lng]} icon={pinIcon} draggable>
-              <Popup>Station Pin — drag to adjust</Popup>
+              <Popup>Drag to adjust location</Popup>
             </Marker>
           )}
         </MapContainer>
-      </div>
 
-      <button
-        className="bg-blue-600 text-white px-4 py-2 rounded"
-        onClick={() => {
-          if (!marker) return alert("Tap on the map to place the station pin!");
-          onPick(marker);
-        }}
-      >
-        Use This Location
-      </button>
+        {/* FLOATING BUTTON FIXED & VISIBLE */}
+        <button
+          className="
+            absolute bottom-4 left-1/2 transform -translate-x-1/2
+            bg-blue-600 text-white px-6 py-3 rounded-lg shadow-lg
+            text-lg font-semibold z-[9999]
+          "
+          onClick={() => {
+            if (!marker) return alert("Tap anywhere on the map to set the station location!");
+            onPick(marker);
+          }}
+        >
+          Use This Location
+        </button>
+      </div>
     </div>
   );
 }
