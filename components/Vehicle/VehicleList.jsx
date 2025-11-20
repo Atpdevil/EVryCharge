@@ -20,12 +20,16 @@ export default function VehicleList({ onSelectDone }) {
           <div
             key={i}
             onClick={() => setVehicle(v)}
-            className={`cursor-pointer border rounded-xl p-4 text-center shadow ${
-              selected?.name === v.name ? "border-green-600" : "border-gray-300"
-            }`}
+            className={`cursor-pointer overflow-hidden shadow-md 
+              ${selected?.name === v.name ? "ring-2 ring-green-600" : ""}`}
           >
-            <img src={v.image} className="w-full h-32 object-contain" />
-            <p className="mt-3 font-medium">{v.name}</p>
+            <img
+              src={v.image}
+              className="w-full h-48 object-cover block"
+            />
+            <p className="py-3 font-medium text-center bg-white">
+              {v.name}
+            </p>
           </div>
         ))}
       </div>
