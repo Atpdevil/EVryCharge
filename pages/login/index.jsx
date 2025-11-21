@@ -1,5 +1,6 @@
 import React, { useEffect, useRef } from "react";
 import { useRouter } from "next/router";
+import SignupBubbleMenu from "@/components/BubbleMenu/SignupBubbleMenu";
 
 export default function LoginMain() {
   const router = useRouter();
@@ -49,24 +50,14 @@ export default function LoginMain() {
       className="min-h-screen flex flex-col items-center justify-center relative"
     >
       <div className="z-10 flex flex-col items-center justify-center gap-6 p-6">
-        <h1 className="text-4xl font-bold text-black">EVryCharge</h1>
+        <h1 className="text-4xl font-bold text-black bg-white px-6 py-4 rounded-xl shadow-md">
+          EVryCharge
+        </h1>
+
         <p className="text-black-200">Charge Anywhere. Anytime.</p>
 
-        <div className="w-full max-w-md flex flex-col gap-4 mt-6">
-          <button
-            className="p-4 bg-white border rounded-lg shadow hover:bg-gray-100"
-            onClick={() => router.push("/login/user")}
-          >
-            Sign up as User
-          </button>
-
-          <button
-            className="p-4 bg-white border rounded-lg shadow hover:bg-gray-100"
-            onClick={() => router.push("/login/host")}
-          >
-            Sign up as Host
-          </button>
-        </div>
+        {/* NEW BUBBLE MENU REPLACE OLD BUTTONS */}
+        <SignupBubbleMenu />
 
         <div className="text-xs text-black-300 mt-8">
           By continuing you agree to our Terms and Privacy Policy.
