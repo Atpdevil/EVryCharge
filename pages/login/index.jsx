@@ -1,73 +1,41 @@
-import React, { useEffect, useRef } from "react";
-import { useRouter } from "next/router";
-import SignupBubbleMenu from "@/components/BubbleMenu/SignupBubbleMenu";
+import Aurora from "@/components/Aurora";
 import GradientText from "@/components/GradientText";
+import SignupBubbleMenu from "@/components/BubbleMenu/SignupBubbleMenu";
 
 export default function LoginMain() {
-  const router = useRouter();
-  const vantaRef = useRef(null);
-  const vantaEffect = useRef(null);
-
-  useEffect(() => {
-    let mounted = true;
-
-    (async () => {
-      const THREE = await import("three");
-      const VANTA = (await import("vanta/dist/vanta.net.min")).default;
-
-      if (mounted && !vantaEffect.current) {
-        vantaEffect.current = VANTA({
-          el: vantaRef.current,
-          THREE,
-          mouseControls: true,
-          touchControls: true,
-          gyroControls: false,
-          minHeight: 200.0,
-          minWidth: 200.0,
-          scale: 1.0,
-          scaleMobile: 1.0,
-          color: 0x0,
-          backgroundColor: 0x440025,
-          maxDistance: 26.0,
-          points: 15.00,
-          spacing: 18.0,
-        });
-      }
-    })();
-
-    return () => {
-      mounted = false;
-      if (vantaEffect.current) {
-        try {
-          vantaEffect.current.destroy();
-        } catch (_) {}
-        vantaEffect.current = null;
-      }
-    };
-  }, []);
-
   return (
-    <div
-      ref={vantaRef}
-      className="min-h-screen flex flex-col items-center justify-center relative"
-    >
-      <div className="z-10 flex flex-col items-center justify-center gap-6 p-6">
-      <GradientText
-        colors={["#00ff99", "#007bff", "#00ff99"]}
-        animationSpeed={4}
-        className="text-4xl font-extrabold"
-      >
-        EVryCharge
-      </GradientText>
+    <div className="relative min-h-screen w-full overflow-hidden bg-black flex items-center justify-center">
+      
+      {/* Aurora Background */}
+      <div className="absolute inset-0">
+        <Aurora
+          colorStops={["#00ff88", "#007bff", "#8b00ff"]}
+          amplitude={1.2}
+          blend={0.5}
+          speed={0.8}
+        />
+      </div>
 
-        <p className="text-black-200">Charge Anywhere. Anytime.</p>
+      {/* Center Content */}
+      <div className="relative z-10 flex flex-col items-center gap-8 p-6">
+        
+        <GradientText
+          colors={["#00ff99", "#007bff", "#00ff99"]}
+          animationSpeed={4}
+          className="text-4xl font-extrabold"
+        >
+          EVryCharge
+        </GradientText>
+
+        <p className="text-gray-300 text-lg">Charge Anywhere. Anytime.</p>
 
         <SignupBubbleMenu />
 
-        <div className="text-xs text-black-300 mt-8">
+        <p className="text-xs text-gray-400 mt-6">
           By continuing you agree to our Terms and Privacy Policy.
-        </div>
+        </p>
       </div>
+
     </div>
   );
 }

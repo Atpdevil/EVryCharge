@@ -7,6 +7,8 @@ import "@/components/BubbleMenu/BubbleMenu.css";
 import "@/components/GradientText.css";
 import "@/components/TiltedCard.css";
 import "../styles/StarBorder.css";
+import "@/components/Aurora.css";
+
 
 export default function MyApp({ Component, pageProps }) {
   useEffect(() => {

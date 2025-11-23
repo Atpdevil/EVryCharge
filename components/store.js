@@ -25,25 +25,55 @@ export const useStore = create((set, get) => ({
   addMoney: (amount) =>
     set((s) => ({ wallet: s.wallet + Number(amount) })),
 
-  /* VEHICLE */
-  vehicleType: null,
-  setVehicleType: (t) => {
-    set({ vehicleType: t });
-    put(VEHICLE_TYPE_KEY, t);
-  },
+/* VEHICLE */
+vehicleType: null,
+setVehicleType: (t) => {
+  set({ vehicleType: t });
+  put(VEHICLE_TYPE_KEY, t);
 
-  selectedVehicle: null,
-  setSelectedVehicle: (v) => {
-    set({ selectedVehicle: v });
-    put(VEHICLE_SELECTED_KEY, v);
-  },
+  // also update user
+  const user = getJSON("ev_user", null);
+  if (user) {
+    user.vehicleType = t;
+    put("ev_user", user);
+  }
+},
 
-  loadVehicleFromLocal: () => {
-    set({
-      vehicleType: getJSON(VEHICLE_TYPE_KEY, null),
-      selectedVehicle: getJSON(VEHICLE_SELECTED_KEY, null),
-    });
-  },
+selectedVehicle: null,
+setSelectedVehicle: (v) => {
+  const state = get();
+
+  // update user object too
+  let updatedUser = getJSON("ev_user", null);
+  if (updatedUser) {
+    updatedUser.vehicle = v;
+    put("ev_user", updatedUser);
+  }
+
+  set({
+    selectedVehicle: v,
+    user: updatedUser || state.user,
+  });
+
+  put(VEHICLE_SELECTED_KEY, v);
+},
+
+loadVehicleFromLocal: () => {
+  const vehicle = getJSON(VEHICLE_SELECTED_KEY, null);
+  const type = getJSON(VEHICLE_TYPE_KEY, null);
+  const user = getJSON("ev_user", null);
+
+  if (user && vehicle) {
+    user.vehicle = vehicle;
+    put("ev_user", user);
+  }
+
+  set({
+    vehicleType: type,
+    selectedVehicle: vehicle,
+    user,
+  });
+},
 
   /* STATIONS */
   stations: [],

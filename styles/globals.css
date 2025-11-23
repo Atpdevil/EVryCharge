@@ -24,3 +24,15 @@ body { margin: 0; padding: 0; }
 input {
   width: 100%;
 }
+
+html, body {
+  overflow: hidden; /* gradient needs full-screen canvas */
+}
+.gradient-blinds-container {
+  width: 100% !important;
+  height: 100% !important;
+  position: absolute !important;
+  top: 0;
+  left: 0;
+}
+
