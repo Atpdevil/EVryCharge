@@ -1,5 +1,5 @@
-import Aurora from "@/components/Aurora";
-import GradientText from "@/components/GradientText";
+import Aurora from "@/components/Aurora/Aurora";
+import GradientText from "@/components/GradientText/GradientText";
 import SignupBubbleMenu from "@/components/BubbleMenu/SignupBubbleMenu";
 
 export default function LoginMain() {

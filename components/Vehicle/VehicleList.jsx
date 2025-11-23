@@ -1,7 +1,7 @@
 import { useStore } from "../../components/store";
 import { evCars } from "../../data/evCars";
 import { evScooters } from "../../data/evScooters";
-import TiltedCard from "@/components/TiltedCard";
+import TiltedCard from "@/components/TiltedCard/TiltedCard";
 
 export default function VehicleList({ onSelectDone }) {
   const vehicleType = useStore((s) => s.vehicleType);
@@ -10,8 +10,23 @@ export default function VehicleList({ onSelectDone }) {
 
   const list = vehicleType === "car" ? evCars : evScooters;
 
+  const cardConfig = {
+    car: {
+      containerHeight: "135px",
+      imageHeight: "150px",
+      containerWidth: "100%",
+      imageWidth: "100%",
+    },
+    scooter: {
+      containerHeight: "200px",
+      imageHeight: "200px",
+      containerWidth: "100%",
+      imageWidth: "100%",
+    },
+  };
+
   return (
-    <div className="flex flex-col items-center gap-6 w-full">
+    <div className="flex flex-col items-center gap-6 w-full pb">
       <h2 className="text-2xl font-bold">
         Choose Your {vehicleType === "car" ? "Car" : "Scooter"}
       </h2>
@@ -26,18 +41,18 @@ export default function VehicleList({ onSelectDone }) {
           }`}
         >
           <TiltedCard
-            imageSrc={v.image}
-            altText={v.name}
-            captionText={v.name}
-            
-            containerHeight={vehicleType === "car" ? "135px" : "260px"}
-            imageHeight={vehicleType === "car" ? "150px" : "260px"}
-            containerWidth="100%"
-            imageWidth="100%"
+          imageSrc={v.image}
+          altText={v.name}
+          captionText={v.name}
 
-            rotateAmplitude={20}
-            scaleOnHover={1.08}
-          />
+          containerHeight={cardConfig[vehicleType].containerHeight}
+          imageHeight={cardConfig[vehicleType].imageHeight}
+          containerWidth={cardConfig[vehicleType].containerWidth}
+          imageWidth={cardConfig[vehicleType].imageWidth}
+
+          rotateAmplitude={20}
+          scaleOnHover={1.08}
+        />
         </div>
         ))}
       </div>

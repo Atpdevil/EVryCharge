@@ -3,7 +3,7 @@
 import dynamic from "next/dynamic";
 import { useEffect } from "react";
 
-const GridScan = dynamic(() => import("./GridScan"), { ssr: false });
+const GridScan = dynamic(() => import("./GridScan/GridScan"), { ssr: false });
 
 export default function GridBackground() {
   useEffect(() => {

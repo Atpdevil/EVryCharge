@@ -4,11 +4,11 @@ import Script from "next/script";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import { useEffect } from "react";
 import "@/components/BubbleMenu/BubbleMenu.css";
-import "@/components/GradientText.css";
-import "@/components/TiltedCard.css";
+import "@/components/GradientText/GradientText.css";
+import "@/components/TiltedCard/TiltedCard.css";
 import "../styles/StarBorder.css";
-import "@/components/Aurora.css";
-import "@/components/GridScan.css";
+import "@/components/Aurora/Aurora.css";
+import "@/components/GridScan/GridScan.css";
 
 export default function MyApp({ Component, pageProps }) {
   useEffect(() => {

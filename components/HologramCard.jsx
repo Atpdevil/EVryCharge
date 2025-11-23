@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useRef, useEffect, useCallback, useState } from "react";
-import GoogleAuthButton from "./GoogleAuthButton"; // adjust path if yours is different
+import GoogleAuthButton from "./GoogleAuthButton";
 
 export default function HologramCard({ role = "user" /* "user" or "host" */ }) {
   // form state

@@ -1,5 +1,5 @@
 import Link from "next/link";
-import StarBorder from "@/components/StarBorder";
+import StarBorder from "@/components/StarBorder/StarBorder";
 
 export default function UserSidebar() {
   return (
