@@ -108,7 +108,16 @@ void main() {
 `;
 
 export default function Aurora(props) {
-  const { colorStops = ['#5227FF', '#7cff67', '#5227FF'], amplitude = 1.0, blend = 0.5 } = props;
+  const { 
+  colorStops = ['#00ff88', '#007bff', '#8b00ff'], 
+  amplitude = 1.0, 
+  blend = 0.5 
+} = props;
+
+// ENSURE always exactly 3 valid colors
+const safeColorStops = (colorStops && colorStops.length >= 3)
+  ? colorStops.slice(0, 3)
+  : ['#00ff88', '#007bff', '#8b00ff'];
   const propsRef = useRef(props);
   propsRef.current = props;
 
@@ -147,10 +156,10 @@ export default function Aurora(props) {
       delete geometry.attributes.uv;
     }
 
-    const colorStopsArray = colorStops.map(hex => {
-      const c = new Color(hex);
-      return [c.r, c.g, c.b];
-    });
+    const colorStopsArray = safeColorStops.map(hex => {
+    const c = new Color(hex);
+    return [c.r, c.g, c.b];
+  });
 
     program = new Program(gl, {
       vertex: VERT,

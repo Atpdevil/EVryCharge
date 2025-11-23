@@ -8,7 +8,7 @@ import "@/components/GradientText.css";
 import "@/components/TiltedCard.css";
 import "../styles/StarBorder.css";
 import "@/components/Aurora.css";
-
+import "@/components/GridScan.css";
 
 export default function MyApp({ Component, pageProps }) {
   useEffect(() => {

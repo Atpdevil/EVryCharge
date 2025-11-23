@@ -1,67 +1,24 @@
-import React, { useState } from "react";
-import GoogleAuthButton from "../../components/GoogleAuthButton";
+"use client";
+
+import dynamic from "next/dynamic";
+import React from "react";
+
+const GridBackground = dynamic(() => import("../../components/GridBackground"), { ssr: false });
+import HologramCard from "../../components/HologramCard";
 
 export default function UserSignup() {
-  const [form, setForm] = useState({ name: "", phone: "", email: "" });
-
-  const handleSignup = () => {
-    const user = { role: "user", ...form };
-    localStorage.setItem("ev_user", JSON.stringify(user));
-
-    // Redirect to vehicle selection
-    window.location.href = "/user/select-vehicle";
-  };
-
-  const handleGoogle = (data) => {
-    const user = {
-      role: "user",
-      name: data.name,
-      email: data.email,
-      picture: data.picture,
-    };
-    localStorage.setItem("ev_user", JSON.stringify(user));
-
-    // Same redirect
-    window.location.href = "/user/select-vehicle";
-  };
-
   return (
-    <div className="min-h-screen flex items-center justify-center p-6">
-      <div className="w-full max-w-md">
-        <h1 className="text-2xl font-bold mb-4">Sign up as User</h1>
-
-        <div className="bg-white p-6 rounded-xl shadow flex flex-col gap-4 login-card">
-          <input
-            placeholder="Name"
-            value={form.name}
-            onChange={(e) => setForm({ ...form, name: e.target.value })}
-            className="p-3 border rounded"
-          />
-          <input
-            placeholder="Phone"
-            value={form.phone}
-            onChange={(e) => setForm({ ...form, phone: e.target.value })}
-            className="p-3 border rounded"
-          />
-          <input
-            placeholder="Email"
-            value={form.email}
-            onChange={(e) => setForm({ ...form, email: e.target.value })}
-            className="p-3 border rounded"
-          />
-
-          <button
-            onClick={handleSignup}
-            className="bg-blue-600 text-white p-3 rounded"
-          >
-            Signup
-          </button>
-
-          <div className="text-center text-gray-500">OR</div>
-
-          <GoogleAuthButton onSuccess={handleGoogle} />
-        </div>
+    <div className="min-h-screen flex items-center justify-center relative">
+      <GridBackground />
+      <div style={{ width: "100%", maxWidth: 540, padding: 20, zIndex: 30 }}>
+        <HologramCard role="user" />
       </div>
+      <style jsx>{
+      `.min-h-screen {
+          min-height: 100vh;
+        }`
+        }
+        </style>
     </div>
   );
 }
