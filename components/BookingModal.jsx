@@ -35,13 +35,13 @@ const handleSubmit = () => {
 };
 
   return (
-    <div className="fixed inset-0 z-[9999] flex items-center justify-center">
+    <div className="fixed inset-0 z-9999 flex items-center justify-center">
       <div
         className="absolute inset-0 bg-black/40"
         onClick={() => onClose()}
       />
 
-      <div className="bg-white p-6 rounded shadow w-[430px] z-[10000]">
+      <div className="bg-white p-6 rounded shadow w-[430px] z-10000">
         <h3 className="text-lg font-semibold mb-2">{station.name}</h3>
         <p className="text-sm text-gray-600 mb-2">Price: ₹{station.price}/kWh</p>
 

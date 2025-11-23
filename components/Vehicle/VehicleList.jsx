@@ -1,6 +1,7 @@
 import { useStore } from "../../components/store";
 import { evCars } from "../../data/evCars";
 import { evScooters } from "../../data/evScooters";
+import TiltedCard from "@/components/TiltedCard";
 
 export default function VehicleList({ onSelectDone }) {
   const vehicleType = useStore((s) => s.vehicleType);
@@ -15,22 +16,29 @@ export default function VehicleList({ onSelectDone }) {
         Choose Your {vehicleType === "car" ? "Car" : "Scooter"}
       </h2>
 
-      <div className="grid grid-cols-2 md:grid-cols-3 gap-6 w-full max-w-3xl">
+      <div className="grid grid-cols-2 md:grid-cols-3 gap-6 w-full max-w-4xl">
         {list.map((v, i) => (
           <div
-            key={i}
-            onClick={() => setVehicle(v)}
-            className={`cursor-pointer overflow-hidden shadow-md 
-              ${selected?.name === v.name ? "ring-2 ring-green-600" : ""}`}
-          >
-            <img
-              src={v.image}
-              className="w-full h-48 object-cover block"
-            />
-            <p className="py-3 font-medium text-center bg-white">
-              {v.name}
-            </p>
-          </div>
+          key={i}
+          onClick={() => setVehicle(v)}
+          className={`cursor-pointer rounded-xl ${
+            selected?.name === v.name ? "neon-glow" : ""
+          }`}
+        >
+          <TiltedCard
+            imageSrc={v.image}
+            altText={v.name}
+            captionText={v.name}
+            
+            containerHeight={vehicleType === "car" ? "135px" : "260px"}
+            imageHeight={vehicleType === "car" ? "150px" : "260px"}
+            containerWidth="100%"
+            imageWidth="100%"
+
+            rotateAmplitude={20}
+            scaleOnHover={1.08}
+          />
+        </div>
         ))}
       </div>
 

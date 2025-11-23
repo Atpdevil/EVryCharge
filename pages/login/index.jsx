@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from "react";
 import { useRouter } from "next/router";
 import SignupBubbleMenu from "@/components/BubbleMenu/SignupBubbleMenu";
+import GradientText from "@/components/GradientText";
 
 export default function LoginMain() {
   const router = useRouter();
@@ -25,10 +26,11 @@ export default function LoginMain() {
           minWidth: 200.0,
           scale: 1.0,
           scaleMobile: 1.0,
-          color: 0x25d90b,
-          backgroundColor: 0x2d9f2c,
+          color: 0x0,
+          backgroundColor: 0x440025,
           maxDistance: 26.0,
-          spacing: 17.0,
+          points: 15.00,
+          spacing: 18.0,
         });
       }
     })();
@@ -50,13 +52,16 @@ export default function LoginMain() {
       className="min-h-screen flex flex-col items-center justify-center relative"
     >
       <div className="z-10 flex flex-col items-center justify-center gap-6 p-6">
-        <h1 className="text-4xl font-bold text-black bg-white px-6 py-4 rounded-xl shadow-md">
-          EVryCharge
-        </h1>
+      <GradientText
+        colors={["#00ff99", "#007bff", "#00ff99"]}
+        animationSpeed={4}
+        className="text-4xl font-extrabold"
+      >
+        EVryCharge
+      </GradientText>
 
         <p className="text-black-200">Charge Anywhere. Anytime.</p>
 
-        {/* NEW BUBBLE MENU REPLACE OLD BUTTONS */}
         <SignupBubbleMenu />
 
         <div className="text-xs text-black-300 mt-8">

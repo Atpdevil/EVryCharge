@@ -4,6 +4,9 @@ import Script from "next/script";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import { useEffect } from "react";
 import "@/components/BubbleMenu/BubbleMenu.css";
+import "@/components/GradientText.css";
+import "@/components/TiltedCard.css";
+import "../styles/StarBorder.css";
 
 export default function MyApp({ Component, pageProps }) {
   useEffect(() => {

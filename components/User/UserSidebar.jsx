@@ -1,40 +1,52 @@
 import Link from "next/link";
+import StarBorder from "@/components/StarBorder";
 
 export default function UserSidebar() {
   return (
     <div className="w-60 bg-white h-screen shadow-lg p-6 fixed left-0 top-0">
-      <h2 className="text-xl font-bold mb-6">EVryCharge</h2>
+      <h2 className="text-xl font-bold mb-6">User Panel</h2>
 
-      <nav className="flex flex-col gap-4">
-        <Link href="/user/home" className="text-gray-700 hover:text-green-600">
-          Dashboard
+      <nav className="flex flex-col">
+        <Link href="/user/home">
+          <StarBorder color="#00ff99" speed="6s" thickness={2}>
+            Dashboard
+          </StarBorder>
         </Link>
 
-        <Link href="/user/map" className="text-gray-700 hover:text-green-600">
-          Find Chargers
+        <Link href="/user/map">
+          <StarBorder color="#00ff99" speed="6s" thickness={2}>
+            Find Chargers
+          </StarBorder>
         </Link>
 
-        <Link href="/user/bookings" className="text-gray-700 hover:text-green-600">
-          My Bookings
+        <Link href="/user/bookings">
+          <StarBorder color="#00ff99" speed="6s" thickness={2}>
+            My Bookings
+          </StarBorder>
         </Link>
 
-        <Link href="/user/wallet" className="text-gray-700 hover:text-green-600">
-          Wallet
+        <Link href="/user/wallet">
+          <StarBorder color="#00ff99" speed="6s" thickness={2}>
+            Wallet
+          </StarBorder>
         </Link>
 
-        <Link href="/user/profile" className="text-gray-700 hover:text-green-600">
-          Profile
+        <Link href="/user/profile">
+          <StarBorder color="#00ff99" speed="6s" thickness={2}>
+            Profile
+          </StarBorder>
         </Link>
 
-        <button
-          onClick={() => {
-            localStorage.removeItem("ev_user");
-            window.location.href = "/login";
-          }}
-          className="text-red-500 mt-10"
-        >
-          Logout
-        </button>
+          <StarBorder color="#FF4444" speed="6s" thickness={2}>
+          <button
+            onClick={() => {
+              localStorage.removeItem("ev_user");
+              window.location.href = "/login";
+            }}
+            className="block w-full text-red-500">
+            Logout
+          </button>
+        </StarBorder>
       </nav>
     </div>
   );
