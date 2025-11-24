@@ -1,9 +1,7 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import React from "react";
 
-// grid background is heavy; load client-side only
 const GridBackground = dynamic(() => import("../../components/GridBackground"), { ssr: false });
 import HologramCard from "../../components/HologramCard";
 

@@ -1,13 +1,14 @@
 import Aurora from "@/components/Aurora/Aurora";
 import GradientText from "@/components/GradientText/GradientText";
 import SignupBubbleMenu from "@/components/BubbleMenu/SignupBubbleMenu";
+import Link from "next/link";
 
 export default function LoginMain() {
   return (
-    <div className="relative min-h-screen w-full overflow-hidden bg-black flex items-center justify-center">
+    <div className="relative min-h-screen w-full overflow-y-auto bg-black flex items-center justify-center">
       
       {/* Aurora Background */}
-      <div className="absolute inset-0">
+      <div className="absolute inset-0 pointer-events-none">
         <Aurora
           colorStops={["#00ff88", "#007bff", "#8b00ff"]}
           amplitude={1.2}
@@ -31,8 +32,15 @@ export default function LoginMain() {
 
         <SignupBubbleMenu />
 
-        <p className="text-xs text-gray-400 mt-6">
-          By continuing you agree to our Terms and Privacy Policy.
+        <p className="text-xs text-gray-400 mt-6 text-center">
+          By continuing you agree to our{" "}
+          <Link href="/terms" className="text-blue-400 hover:text-blue-500 underline transition">
+            Terms
+          </Link>{" "}
+          and{" "}
+          <Link href="/privacy" className="text-blue-400 hover:text-blue-500 underline transition">
+            Privacy Policy
+          </Link>.
         </p>
       </div>
 
