@@ -9,6 +9,7 @@ import "@/components/TiltedCard/TiltedCard.css";
 import "../styles/StarBorder.css";
 import "@/components/Aurora/Aurora.css";
 import "@/components/GridScan/GridScan.css";
+import "@/components/PixelTransition/PixelTransition.css";
 
 export default function MyApp({ Component, pageProps }) {
   useEffect(() => {
