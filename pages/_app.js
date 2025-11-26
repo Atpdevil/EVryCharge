@@ -10,6 +10,7 @@ import "../styles/StarBorder.css";
 import "@/components/Aurora/Aurora.css";
 import "@/components/GridScan/GridScan.css";
 import "@/components/PixelTransition/PixelTransition.css";
+import Head from 'next/head'
 
 export default function MyApp({ Component, pageProps }) {
   useEffect(() => {
@@ -31,7 +32,9 @@ export default function MyApp({ Component, pageProps }) {
         src={`https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}`}
         strategy="beforeInteractive"
       />
-
+      <Head>
+      <meta name="viewport" content="width=device-width, initial-scale=1" />
+      </Head>
       <Component {...pageProps} />
     </GoogleOAuthProvider>
   );

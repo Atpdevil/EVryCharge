@@ -6,75 +6,82 @@ export default function VehicleTypeSelector({ onNext }) {
   const vehicleType = useStore((s) => s.vehicleType);
 
   return (
-    <div className="flex flex-col items-center gap-6">
-      <h2 className="text-2xl font-bold">Choose Vehicle Type</h2>
+    <div className="flex flex-col items-center gap-6 w-full px-4">
 
-      <div className="flex gap-6">
+      {/* TITLE */}
+      <h2 className="text-2xl sm:text-3xl font-bold text-center">
+        Choose Vehicle Type
+      </h2>
+
+      {/* OPTIONS */}
+      <div className="flex flex-col sm:flex-row gap-6 w-full max-w-xl justify-center">
 
         {/* CAR */}
         <div
           onClick={() => setType("car")}
-          className={`cursor-pointer p-2 rounded-xl border ${
-            vehicleType === "car" ? "border-green-600" : "border-gray-300"
+          className={`cursor-pointer p-2 rounded-xl border transition 
+          ${
+            vehicleType === "car" ? "border-green-600 shadow-lg" : "border-gray-300"
           }`}
         >
           <PixelTransition
             firstContent={
               <div className="flex flex-col items-center justify-center w-full h-full">
-                <p className="text-xl font-semibold">Car</p>
+                <p className="text-lg sm:text-xl font-semibold">Car</p>
               </div>
             }
             secondContent={
               <img
                 src="/vehicles/car.png"
                 alt="Car"
-                className="object-contain w-full h-full scale-180"
+                className="object-contain w-full h-full"
               />
             }
-            gridSize={26}
+            gridSize={22}
             pixelColor="#bfbfbf"
             once={false}
-            animationStepDuration={0.3}
-            className="w-60 h-40 rounded-xl overflow-hidden"
+            animationStepDuration={0.25}
+            className="w-48 h-32 sm:w-60 sm:h-40 rounded-xl overflow-hidden"
           />
         </div>
 
         {/* SCOOTER */}
         <div
           onClick={() => setType("scooter")}
-          className={`cursor-pointer p-2 rounded-xl border ${
-            vehicleType === "scooter" ? "border-green-600" : "border-gray-300"
+          className={`cursor-pointer p-2 rounded-xl border transition 
+          ${
+            vehicleType === "scooter" ? "border-green-600 shadow-lg" : "border-gray-300"
           }`}
         >
           <PixelTransition
             firstContent={
               <div className="flex flex-col items-center justify-center w-full h-full">
-                <p className="text-xl font-semibold">Scooter</p>
+                <p className="text-lg sm:text-xl font-semibold">Scooter</p>
               </div>
             }
             secondContent={
               <img
                 src="/vehicles/scooter.png"
                 alt="Scooter"
-                className="object-contain w-full h-full scale-160"
+                className="object-contain w-full h-full"
               />
             }
-            gridSize={26}
+            gridSize={22}
             pixelColor="#bfbfbf"
             once={false}
-            animationStepDuration={0.3}
-            className="w-60 h-40 rounded-xl overflow-hidden"
+            animationStepDuration={0.25}
+            className="w-48 h-32 sm:w-60 sm:h-40 rounded-xl overflow-hidden"
           />
         </div>
 
       </div>
 
+      {/* NEXT BUTTON */}
       <button
         disabled={!vehicleType}
         onClick={onNext}
-        className={`mt-4 px-6 py-3 rounded text-white ${
-          vehicleType ? "bg-green-600" : "bg-gray-400"
-        }`}
+        className={`mt-4 px-8 py-3 rounded text-white transition w-full sm:w-auto 
+        ${vehicleType ? "bg-green-600" : "bg-gray-400"}`}
       >
         Next
       </button>
