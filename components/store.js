@@ -92,7 +92,7 @@ addStation: (station) => {
   const st = {
     id: uuidv4(),
     createdAt: Date.now(),
-    ownerId: user.id,         // ⭐ IMPORTANT
+    ownerId: user.id,         
     revenue: 0,
     bookings: 0,
     status: "Available",
