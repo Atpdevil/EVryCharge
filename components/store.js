@@ -156,7 +156,7 @@ createBooking: (payload) => {
     if (s.id === payload.stationId) {
       return {
         ...s,
-        bookings: (s.bookings || 0) + 1,   // ⭐ increase counter
+        bookings: (s.bookings || 0) + 1,
       };
     }
     return s;

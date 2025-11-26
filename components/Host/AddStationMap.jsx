@@ -146,12 +146,12 @@ export default function AddStationMap({ onPick }) {
           )}
         </MapContainer>
 
-        {/* FLOATING BUTTON FIXED & VISIBLE */}
+        {/* FLOATING BUTTON*/}
         <button
           className="
             absolute bottom-4 left-1/2 transform -translate-x-1/2
             bg-blue-600 text-white px-6 py-3 rounded-lg shadow-lg
-            text-lg font-semibold z-[9999]
+            text-lg font-semibold z-9999
           "
           onClick={() => {
             if (!marker) return alert("Tap anywhere on the map to set the station location!");
