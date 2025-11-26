@@ -2,27 +2,49 @@
 
 import { useEffect, useState } from "react";
 import HostSidebar from "../../components/Host/HostSidebar";
-import EarningsCard from "../../components/Host/EarningsCard";
 import StationCard from "../../components/Host/StationCard";
 import { useStore } from "../../components/store";
 
 export default function HostDashboard() {
   const [user, setUser] = useState(null);
+  const [mounted, setMounted] = useState(false);
   const [open, setOpen] = useState(false);
 
   const stations = useStore((s) => s.stations);
   const loadStationsFromLocal = useStore((s) => s.loadStationsFromLocal);
 
+  const hostEarnings = useStore((s) => s.hostEarnings); // new earnings
+
   useEffect(() => {
     const stored = localStorage.getItem("ev_user");
     if (stored) setUser(JSON.parse(stored));
+
     loadStationsFromLocal();
+    setMounted(true);
   }, []);
 
-  const todaysEarnings = stations.reduce(
-    (acc, s) => acc + (s.revenue || 0),
-    0
-  );
+  const todayDate = new Date().toDateString();
+
+  // Compute total earnings for today (after mount only)
+  const todaysEarnings = mounted
+    ? hostEarnings
+        .filter(
+          (e) =>
+            e.hostId === user?.id &&
+            new Date(e.time).toDateString() === todayDate
+        )
+        .reduce((sum, e) => sum + Number(e.amount), 0)
+    : 0;
+
+  // Compute earnings per station (optional)
+  const earningsByStation = mounted
+    ? hostEarnings
+        .filter((e) => e.hostId === user?.id)
+        .reduce((acc, e) => {
+          acc[e.stationId] = (acc[e.stationId] || 0) + Number(e.amount);
+          return acc;
+        }, {})
+    : {};
 
   return (
     <div className="flex min-h-screen bg-gray-100">
@@ -45,34 +67,46 @@ export default function HostDashboard() {
 
       {/* MAIN CONTENT */}
       <main className="flex-1 p-6 md:ml-0 mt-16 md:mt-0 w-full">
-
         <h1 className="text-2xl sm:text-3xl font-bold">
           Welcome {user?.name || "Host"}
         </h1>
 
-        <p className="text-gray-600 mb-6">
-          Here's your station overview.
-        </p>
+        <p className="text-gray-600 mb-6">Here's your station overview.</p>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
 
-          <EarningsCard amount={Math.round(todaysEarnings)} />
+          {/* TODAY'S EARNINGS BOX */}
+          <div className="bg-green-600 text-white p-6 rounded-lg shadow-lg">
+            <h2 className="text-xl font-semibold">Today's Earnings</h2>
 
+            <div className="text-4xl font-bold mt-3">
+              ₹{todaysEarnings.toFixed(2)}
+            </div>
+
+            <p className="text-green-100 text-sm mt-2">
+              From all completed user bookings today.
+            </p>
+          </div>
+
+          {/* STATIONS */}
           <div className="bg-white p-6 rounded-lg shadow-md">
-            <h3 className="text-lg sm:text-xl font-semibold mb-4">
-              Your Stations
-            </h3>
+            <h3 className="text-xl font-semibold mb-4">Your Stations</h3>
 
             {stations.length === 0 ? (
-              <p className="text-gray-500">
-                You haven't added any stations yet.
-              </p>
+              <p className="text-gray-500">You haven't added any stations yet.</p>
             ) : (
-              stations.map((station) => (
-                <StationCard key={station.id} station={station} />
-              ))
+              stations.map((station) => {
+                const stEarn = earningsByStation[station.id] || 0;
+
+                return (
+                  <div key={station.id} className="mb-4">
+                    <StationCard station={station} />
+                  </div>
+                );
+              })
             )}
           </div>
+
         </div>
       </main>
     </div>

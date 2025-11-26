@@ -38,7 +38,7 @@ export default function VehicleTypeSelector({ onNext }) {
               />
             }
             gridSize={22}
-            pixelColor="#bfbfbf"
+            pixelColor="#ffffff"
             once={false}
             animationStepDuration={0.25}
             className="w-48 h-32 sm:w-60 sm:h-40 rounded-xl overflow-hidden"
@@ -67,7 +67,7 @@ export default function VehicleTypeSelector({ onNext }) {
               />
             }
             gridSize={22}
-            pixelColor="#bfbfbf"
+            pixelColor="#ffffff"
             once={false}
             animationStepDuration={0.25}
             className="w-48 h-32 sm:w-60 sm:h-40 rounded-xl overflow-hidden"

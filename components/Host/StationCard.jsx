@@ -6,6 +6,7 @@ export default function StationCard({ station }) {
   const deleteStation = useStore((s) => s.deleteStation);
   const updateStation = useStore((s) => s.updateStation);
   const bookings = useStore((s) => s.bookings);
+  const hostEarnings = useStore((s) => s.hostEarnings);   // ⭐ NEW
 
   const [isEditing, setIsEditing] = useState(false);
   const [showUserInfo, setShowUserInfo] = useState(false);
@@ -16,10 +17,15 @@ export default function StationCard({ station }) {
     status: station.status,
   });
 
-  // Get latest booking for this station
+  // Latest booking (unchanged)
   const latestBooking = bookings
     .filter((b) => b.stationId === station.id)
     .sort((a, b) => b.createdAt - a.createdAt)[0];
+
+  // ⭐ REAL REVENUE FOR THIS STATION
+  const revenueForThisStation = hostEarnings
+    .filter((e) => e.stationId === station.id)
+    .reduce((sum, e) => sum + Number(e.amount), 0);
 
   function saveEdit() {
     updateStation(station.id, editData);
@@ -60,8 +66,12 @@ export default function StationCard({ station }) {
           <p className="text-gray-600">Status: {station.status}</p>
           <p className="text-gray-600">Price: ₹{station.price}/kWh</p>
 
+          {/* ⭐ NEW REAL REVENUE FIELD */}
           <p className="text-gray-600 mt-1">
-            Revenue: <span className="font-semibold">₹{station.revenue || 0}</span>
+            Revenue:{" "}
+            <span className="font-semibold">
+              ₹{revenueForThisStation.toFixed(2)}
+            </span>
           </p>
 
           <p className="text-gray-600">
@@ -94,7 +104,7 @@ export default function StationCard({ station }) {
             Delete
           </button>
 
-          {/* ⭐ SHOW ONLY IF BOOKINGS > 0 */}
+          {/* SHOW IF BOOKINGS EXIST */}
           {station.bookings > 0 && (
             <button
               className="p-2 bg-green-600 text-white rounded"
@@ -111,26 +121,39 @@ export default function StationCard({ station }) {
             value={editData.name}
             onChange={(e) => setEditData({ ...editData, name: e.target.value })}
           />
+
           <input
             className="border p-2 w-full mb-2 rounded"
             type="number"
             value={editData.price}
-            onChange={(e) => setEditData({ ...editData, price: Number(e.target.value) })}
+            onChange={(e) =>
+              setEditData({ ...editData, price: Number(e.target.value) })
+            }
           />
+
           <select
             className="border p-2 w-full mb-2 rounded"
             value={editData.status}
-            onChange={(e) => setEditData({ ...editData, status: e.target.value })}
+            onChange={(e) =>
+              setEditData({ ...editData, status: e.target.value })
+            }
           >
             <option>Available</option>
             <option>Busy</option>
             <option>Offline</option>
           </select>
 
-          <button className="p-2 bg-green-600 text-white rounded mr-2" onClick={saveEdit}>
+          <button
+            className="p-2 bg-green-600 text-white rounded mr-2"
+            onClick={saveEdit}
+          >
             Save
           </button>
-          <button className="p-2 bg-gray-400 text-white rounded" onClick={() => setIsEditing(false)}>
+
+          <button
+            className="p-2 bg-gray-400 text-white rounded"
+            onClick={() => setIsEditing(false)}
+          >
             Cancel
           </button>
         </>
