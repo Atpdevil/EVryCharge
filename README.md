@@ -4,7 +4,7 @@
 - It provides two roles:
   - EV User – finds chargers, books slots, manages wallet, profile.
   - Charger Host – adds stations, edits them, views bookings, tracks earnings.
-- The project mimics a real EV platform workflow, including station creation, booking system, cancellation, host revenue, and location-based selection using Leaflet Maps
+- This system operates using a dual-role structure, allowing users to register as either a Host to list and manage charging points or as a User seeking to book sessions for specific EV models, such as cars and scooters. Detailed user flows illustrate how drivers select a vehicle, use the integrated map component to locate available chargers, and complete transactions via a dedicated Wallet module. The Host dashboard provides tools to add new stations, monitor earnings, and view crucial user information associated with bookings, demonstrating revenue management capabilities. Technically, the application is supported by a robust system architecture built on Next.js/React and Node.js, utilizing Google Maps API to power location-based services and manage essential modules like authentication, booking, and station availability. Overall, these sources provide a comprehensive overview of both the user experience and the underlying technical framework of the EVryCharge application.
 
 Project Structure
 
